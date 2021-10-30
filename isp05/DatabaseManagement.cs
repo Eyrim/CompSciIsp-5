@@ -1,8 +1,9 @@
 ﻿//TODO: Flesh out the error handling
+//TODO: Document
 
 using System;
 using System.Collections.Generic;
-using System.Collections;
+using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 
@@ -86,28 +87,40 @@ namespace isp05
         /// <summary>
         /// Sends a DB query, such as a SELECT statement
         /// </summary>
-        /// <param name="toExecute"></param>
-        /// <returns></returns>
-        public string SendQuery(string toExecute)
+        /// <param name="toExecute">The query to send to the DB</param>
+        /// <returns>System.Data.SQLite.SQLiteDataReader</returns>
+        public SQLiteDataReader SendQuery(string toExecute)
         {
             using (SQLiteCommand command = new SQLiteCommand(this.Connection))
             {
-                // The dictionary to hold the data returned from the DB
-                Dictionary<string, string> dataFromDB = new Dictionary<string, string>();
-                
                 command.CommandText = toExecute;
-                
-                // The reader for the data from the DB
-                using (SQLiteDataReader reader = command.ExecuteReader())
-                {
-                    IEnumerator readerEnum = reader.GetEnumerator();
-                    
-                    //dataFromDB.Add(key:reader.GetString(), value:);
-                    reader.Read();
-                    return reader.GetString(0);
-                }
+                command.CommandType = CommandType.Text;
+
+                SQLiteDataReader reader = command.ExecuteReader();
+
+                return reader;
             }
         }
+
+        /*
+        using (SQLiteConnection connection = new SQLiteConnection(myDatabase.mySQLiteConnection))
+        {
+            connection.Open();
+
+            using (SQLiteCommand selectCMD = connection.CreateCommand())
+            {
+                selectCMD.CommandText = "SELECT * FROM Food";
+                selectCMD.CommandType = CommandType.Text;
+                SQLiteDataReader myReader = selectCMD.ExecuteReader();
+                while (myReader.Read())
+                {
+                    Console.WriteLine(myReader["FoodName"] + " " + myReader["FoodType"]);
+                }
+            }
+    
+        }
+        
+        */
         
         /// <summary>
         /// Initialises a field in the DB
@@ -126,20 +139,25 @@ namespace isp05
         {
             using (SQLiteCommand command = new SQLiteCommand(this.Connection))
             {
-                string toExecute = @$"ALTER TABLE";
+                /*ALTER TABLE table_name
+                  ADD column_name datatype;*/
+                string toExecute = @$"ALTER TABLE ";
 
-                toExecute += @$"{TableName}(";
-                toExecute += FieldType;
-                toExecute += (IsPrimaryKey) ? "PRIMARY KEY" : "";
-                toExecute += (!IsNullable) ? "NOT NULL" : "";
+                toExecute += @$"{TableName} ";
+                toExecute += "ADD ";
+                toExecute += $"{FieldName} ";
+                toExecute += $"{FieldType} ";
+                toExecute += (IsPrimaryKey) ? "PRIMARY KEY " : "";
+                toExecute += (!IsNullable) ? "NOT NULL " : "";
                 toExecute += (IsAutoIncrement) ? "AUTO INCREMENT" : "";
-                toExecute += ");";
+                toExecute += ";";
 
                 command.CommandText = toExecute;
                 command.ExecuteNonQuery();
             }
         }
 
+        //TODO: REFACTOR
         /// <summary>
         /// A method to initialise a group of records
         /// </summary>
@@ -158,54 +176,40 @@ namespace isp05
                 // The keys in the Dictionary passed in
                 Dictionary<string, string>.KeyCollection valueKeys = Values.Keys;
 
-                // Enumerator to traverse key collection
-                using (Dictionary<string, string>.KeyCollection.Enumerator keyEnumerator = valueKeys.GetEnumerator())
+                Console.WriteLine(valueKeys.Count);
+
+                for (int i = 0; i < valueKeys.Count; i++)
                 {
-                    // Enumerators start one before the first element, so moving to first here
-                    keyEnumerator.MoveNext();
-                    
-                    // Whether the end of the Dict has been reached
-                    bool canMove = false;
+                    // Adds the current key to the command
+                    toExecute += @$"{valueKeys.ToList()[i]}";
+                    Console.WriteLine("DEBUG: keyEnumerator.Current: " + valueKeys.ToList()[i]);
+                    Console.WriteLine("i: " + i);
 
-                    for (int i = 0; i < Values.Count - 1; i++)
-                    {
-                        // Adds the current key to the command
-                        toExecute += @$"{keyEnumerator.Current},";
-                        Console.WriteLine("DEBUG: keyEnumerator.Current: " + keyEnumerator.Current);
-                        
-                        // Moves the enumerator and checks if end of dict reached
-                        canMove = (keyEnumerator.MoveNext()) ? true : false;
-
-                        // If end of dict reached then break
-                        if (canMove == false)
-                        {
-                            // Remove the last comma, which should be the last character
-                            toExecute = toExecute.Remove(startIndex: toExecute.Length - 1, count: 1);
-                            Console.WriteLine("DEBUG: toExecute: " + toExecute);
-                            toExecute += ")VALUES(";
-                            break;
-                        }
-                    }
-
-                    
-                    // ADDING THE DATA ITSELF
-                    
-                    //INSERT INTO table_name (column1, column2, column3, ...)
-                    //VALUES (value1, value2, value3, ...);
-
-                    for (int i = 0; i < Values.Count - 1; i++)
-                    {
-                        toExecute += Values[valueKeys.ToList()[i]];
+                    if (i != valueKeys.Count - 1)
                         toExecute += ",";
-                    }
-                    
-                    toExecute = toExecute.Remove(startIndex: toExecute.Length - 1, count: 1);
-                    Console.WriteLine("DEBUG: toExecute: " + toExecute);
-                    toExecute += ");";
-                    
-                    command.CommandText = toExecute;
-                    command.ExecuteNonQuery();
                 }
+
+                toExecute += ")VALUES(";
+
+                
+                // ADDING THE DATA ITSELF
+                
+                //INSERT INTO table_name (column1, column2, column3, ...)
+                //VALUES (value1, value2, value3, ...);
+
+                for (int i = 0; i < Values.Count; i++)
+                {
+                    toExecute += $"\"{Values[valueKeys.ToList()[i]]}\"";
+                    
+                    if (i != valueKeys.Count - 1)
+                        toExecute += ",";
+                }
+
+                toExecute += ");";
+                Console.WriteLine("DEBUG: toExecute: " + toExecute);
+
+                command.CommandText = toExecute;
+                command.ExecuteNonQuery();
             }
         }
     }

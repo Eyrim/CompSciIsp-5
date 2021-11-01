@@ -32,6 +32,10 @@ namespace isp05
             );");
 
 
+            DB.SendNonQuery("INSERT INTO authors(au_id, au_lname, au_fname, au_phone, au_address, au_city, au_state, au_zip, au_contract)VALUES(172 - 32 - 1176, White, Johnson, 408 - 496 - 7223, 10932 Bigge Rd., Menlo Park, CA, 94025, y); ");
+
+            Environment.Exit(0);
+
             PopulateDB("C:\\Users\\h50004271\\Source\\Repos\\CompSciIsp-5\\isp05\\Data.txt", DB);
 
             //Console.WriteLine(reader.GetValues()[0]);
@@ -42,9 +46,9 @@ namespace isp05
         /// </summary>
         /// <param name="file">The file containing the data</param>
         static void PopulateDB(string file, DatabaseManagement DB)
-         {
+        {
             List<string> dataFromFile = Data.ReadFile(filePath: file);
-            Console.WriteLine("Data Grabed");
+
 
             // Assign each value to the correct entry in the database
 
@@ -67,10 +71,17 @@ namespace isp05
 
                 query += ");";
 
-                DB.SendNonQuery(query);
-            }
+                
 
-            
+                Data.Sanitise(query);
+
+                Data.AddQuotes(query);
+
+                // Fix the boolean at the end of the string, if it is 1 then it true, 0 is false
+                Console.WriteLine(query);
+
+                //DB.SendNonQuery(query);
+            }
 
             // Profit question mark
          }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Linq;
 
 namespace isp05
@@ -9,10 +11,56 @@ namespace isp05
      {
          static void Main(string[] args)
          {
-             InitDB();
+             DatabaseManagement DB = InitDB();
+
+             GetAllRecords(DB);
+         }
+
+         static void GetAllRecords(DatabaseManagement DB)
+         {
+             // Get all data and put into 2d list
+             SQLiteDataReader reader = DB.SendQuery("SELECT * FROM authors;");
+             List<List<string>> authorData = new List<List<string>>();
+             List<string> newList = new List<string>();
+
+             for (int i = 0; i < reader.FieldCount; i++)
+             {
+                 reader.Read();
+                 for (int j = 0; j < reader.GetString(i).Length; j++)
+                 {
+                     authorData[i].Add(reader.GetString(i));
+                 }
+             }
+             
+             // while (reader.Read())
+             // {
+             //     newList.Add(reader.GetString(counter));
+             //     
+             //     // newList.Add(reader.GetString(0));
+             // }
+             
+             // au_id = authorData[0];
+             // au_lname = authorData[1];
+             // au_fname = authorData[2];
+             // phone = authorData[3];
+             // address = authorData[4];
+             // state = authorData[5];
+             // zip = authorData[6];
+             // contract = authorData[7];
+             
+             Console.WriteLine("hi");
+             
+             // while (rdr.Read())
+             // {
+             //     Console.WriteLine($"{rdr.GetString(4)}");
+             // }
+
+             // Iterate through 2d list and make a new author object for each row
+
+             // 
          }
  
-         static void InitDB()
+         static DatabaseManagement InitDB()
          {
             // The Database object to operate on
             DatabaseManagement DB = new DatabaseManagement(connectionSource:"Data Source=:memory:"); // @"URI=file:C:\Users\gamin\RiderProjects\a2\isps\isp05\isp05\data.db" 
@@ -36,16 +84,18 @@ namespace isp05
 
             //Environment.Exit(0);
 
-            PopulateDB("C:\\Users\\gamin\\RiderProjects\\a2\\isps\\isp05\\isp05\\Data.txt", DB);
+            DB = PopulateDB("C:\\Users\\gamin\\RiderProjects\\a2\\isps\\isp05\\isp05\\Data.txt", DB);
 
             //Console.WriteLine(reader.GetValues()[0]);
-        }
+
+            return DB;
+         }
 
         /// <summary>
         /// Populates the Database with data from a given file
         /// </summary>
         /// <param name="file">The file containing the data</param>
-        static void PopulateDB(string file, DatabaseManagement DB)
+        static DatabaseManagement PopulateDB(string file, DatabaseManagement DB)
         {
             List<string> dataFromFile = Data.ReadFile(filePath: file);
 
@@ -86,9 +136,14 @@ namespace isp05
                 query = "INSERT INTO authors(au_id, au_lname, au_fname, au_phone, au_address, au_city, au_state, au_zip, au_contract) VALUES(";
             }
 
-            DB.SendQuery(toExecute: "SELECT au_id FROM authors");
+            return DB;
 
-            // Profit question mark
+            // SQLiteDataReader rdr = DB.SendQuery(toExecute: "SELECT * FROM authors");
+
+            // while (rdr.Read())
+            // {
+            //     Console.WriteLine($"{rdr.GetString(4)}");
+            // }
         }
      }
  }

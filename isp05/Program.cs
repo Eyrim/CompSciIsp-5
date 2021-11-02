@@ -15,7 +15,7 @@ namespace isp05
          static void InitDB()
          {
             // The Database object to operate on
-            DatabaseManagement DB = new DatabaseManagement(connectionSource:"Data Source=:memory:");
+            DatabaseManagement DB = new DatabaseManagement(connectionSource:"Data Source=:memory:"); // @"URI=file:C:\Users\gamin\RiderProjects\a2\isps\isp05\isp05\data.db" 
 
             // Creates the table of authors, ready to be populated from the file
             DB.SendNonQuery(@"
@@ -32,11 +32,11 @@ namespace isp05
             );");
 
 
-            DB.SendNonQuery("INSERT INTO authors(au_id, au_lname, au_fname, au_phone, au_address, au_city, au_state, au_zip, au_contract)VALUES(172 - 32 - 1176, White, Johnson, 408 - 496 - 7223, 10932 Bigge Rd., Menlo Park, CA, 94025, y); ");
+            //DB.SendNonQuery("INSERT INTO authors(au_id, au_lname, au_fname, au_phone, au_address, au_city, au_state, au_zip, au_contract)VALUES(172 - 32 - 1176, White, Johnson, 408 - 496 - 7223, 10932 Bigge Rd., Menlo Park, CA, 94025, y); ");
 
-            Environment.Exit(0);
+            //Environment.Exit(0);
 
-            PopulateDB("C:\\Users\\h50004271\\Source\\Repos\\CompSciIsp-5\\isp05\\Data.txt", DB);
+            PopulateDB("C:\\Users\\gamin\\RiderProjects\\a2\\isps\\isp05\\isp05\\Data.txt", DB);
 
             //Console.WriteLine(reader.GetValues()[0]);
         }
@@ -56,34 +56,39 @@ namespace isp05
 
             string query = ""; // "INSERT INTO authors(au_id, au_lname, au_fname, au_phone, au_address, au_city, au_state, au_zip, au_contract) VALUES(";
             List<string> lineToInsert = new List<string>();
+            List<List<string>> newList = new List<List<string>>();
 
+            query = "INSERT INTO authors(au_id, au_lname, au_fname, au_phone, au_address, au_city, au_state, au_zip, au_contract) VALUES(";
+            
             for (int i = 0; i < dataFromFile.Count - 1; ++i)
             {
-                query = "INSERT INTO authors(au_id, au_lname, au_fname, au_phone, au_address, au_city, au_state, au_zip, au_contract) VALUES(";
-                lineToInsert = dataFromFile[i].Split("|").ToList();
-                for (int j = 0; j < lineToInsert.Count; j++)
-                {
-                    query += lineToInsert[j];
-                    query += ",";
-                }
-
-                query = query.Remove(query.Length - 1);
-
-                query += ");";
-
-                
-
-                Data.Sanitise(query);
-
-                Data.AddQuotes(query);
-
-                // Fix the boolean at the end of the string, if it is 1 then it true, 0 is false
-                Console.WriteLine(query);
-
-                //DB.SendNonQuery(query);
+                newList.Add(dataFromFile[i].Split("|").ToList());
+                newList[i] = Data.AddQuotes(newList[i]);
             }
 
+            // query = "INSERT INTO authors(au_id, au_lname, au_fname, au_phone, au_address, au_city, au_state, au_zip, au_contract) VALUES(";
+            
+            // Adds each line in the list to the query
+            for (int i = 0; i < newList.Count; i++)
+            {
+                for (int j = 0; j < newList[i].Count; j++)
+                {
+                    query += newList[i][j];
+
+                    if (j != 8)
+                        query += ",";
+                }
+
+                query += ");";
+            
+                DB.SendNonQuery(query);
+                
+                query = "INSERT INTO authors(au_id, au_lname, au_fname, au_phone, au_address, au_city, au_state, au_zip, au_contract) VALUES(";
+            }
+
+            DB.SendQuery(toExecute: "SELECT au_id FROM authors");
+
             // Profit question mark
-         }
+        }
      }
  }

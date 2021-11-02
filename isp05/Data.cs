@@ -1,62 +1,80 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
 
 namespace isp05
 {
     public static class Data
     {
         /// <summary>
-        /// 
+        /// Removes misc single quotes from the contents of Data.txt, names like O'Leary are causing exceptions
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string AddQuotes(string s)
+        public static string SanitiseQuotes(string s)
         {
-            Regex rx = new Regex(@"[\s|,]");
-            
-            string toReturn = "";
+            string current = "";
 
-            for (int i = 0; i < s?.Length; i++)
+            for (int i = 0; i < s.Length; i++)
             {
-                if (!(rx.IsMatch(s[i].ToString())))
-                {
-                    toReturn += s[i];
-                }
-                else
-                {
-                    if (s[i] == '.')
-                        continue;
-
-                    toReturn += " ";
-                }
+                if (s[i] != '\'')
+                    current += s[i];
             }
 
-            return null;
+            return current;
         }
-
+        
         /// <summary>
         /// 
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string Sanitise(string s)
+        public static string RemoveFullStop(string s)
         {
-            Regex rx = new Regex(@"[\s|\.]");
+            string newString = "";
 
-            string toReturn = s;
-
-            for (int i = 0; i < toReturn?.Length; i++)
+            for (int i = 0; i < s.Length; i++)
             {
-                toReturn = rx.Replace(toReturn, "");
+                if (s[i] != '.')
+                {
+                    newString += s[i];
+                }
             }
 
+            return newString;
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns>System.Collections.Generic.List (string)</returns>
+        public static List<string> AddQuotes(List<string> s)
+        {
+            string current = "\"";
+            List<string> toReturn = new List<string>();
             
+            for (int i = 0; i < s.Count; i++)
+            {
+                current += s[i];
+                current += "\"";
+                toReturn.Add(current);
 
-            
+                current = "\"";
+            }
 
             return toReturn;
+            
+            // string current = "'";
+            // List<string> toReturn = new List<string>();
+            // for (int i = 0; i < s.Count; i++)
+            // { 
+            //     current += s[i];
+            //     current += "'";
+            //     toReturn.Add(current);
+            //     current = "'";
+            //     Console.WriteLine(toReturn[i]);
+            // }
         }
 
         /// <summary>

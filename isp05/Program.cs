@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Data.SQLite;
-using System.Diagnostics;
 using System.Linq;
 
 namespace isp05
@@ -13,51 +11,62 @@ namespace isp05
          {
              DatabaseManagement DB = InitDB();
 
-             GetAllRecords(DB);
+             List<Author> authors = GetAllRecords(DB);
+
+             string idToSearch = Console.ReadLine();
+                 
+                 
+             for (int i = 0; i < authors.Count; i++)
+             {
+                 if (authors[i].au_id == idToSearch)
+                 {
+                     Console.WriteLine("Author_ID: {authors[i].au_id}");
+                     Console.WriteLine("Author_LastName: {authors[i].au_lname}");
+                     Console.WriteLine("Author_FirstName: {authors[i].au_fname}");
+                     Console.WriteLine("Author_Phone: {authors[i].phone}");
+                     Console.WriteLine("Author_Address: {authors[i].address}");
+                     Console.WriteLine("Author_State: {authors[i].state}");
+                     Console.WriteLine("Author_Zip: {authors[i].zip}");
+                     Console.WriteLine("Author_Contract: {authors[i].contract}");
+                 }
+             }
          }
 
-         static void GetAllRecords(DatabaseManagement DB)
+         static List<Author> GetAllRecords(DatabaseManagement DB)
          {
              // Get all data and put into 2d list
              SQLiteDataReader reader = DB.SendQuery("SELECT * FROM authors;");
-             List<List<string>> authorData = new List<List<string>>();
+             List<Author> authors = new List<Author>();
              List<string> newList = new List<string>();
 
-             for (int i = 0; i < reader.FieldCount; i++)
+             int c = 0;
+             
+             for (int i = 0; i < reader.VisibleFieldCount; i++)
              {
-                 reader.Read();
-                 for (int j = 0; j < reader.GetString(i).Length; j++)
+                 if (reader.HasRows && reader.Read())
                  {
-                     authorData[i].Add(reader.GetString(i));
+                     while (true)
+                     {
+                         // We can just wait for this to break, readers are really weird
+                         try
+                         {
+                             newList.Add(reader.GetString(c));
+                             c++;
+                         }
+                         
+                         catch
+                         {
+                             break;
+                         }
+                     }
+
+                     c = 0;
+                     authors.Add(new Author(newList));
+                     newList.Clear();
                  }
              }
-             
-             // while (reader.Read())
-             // {
-             //     newList.Add(reader.GetString(counter));
-             //     
-             //     // newList.Add(reader.GetString(0));
-             // }
-             
-             // au_id = authorData[0];
-             // au_lname = authorData[1];
-             // au_fname = authorData[2];
-             // phone = authorData[3];
-             // address = authorData[4];
-             // state = authorData[5];
-             // zip = authorData[6];
-             // contract = authorData[7];
-             
-             Console.WriteLine("hi");
-             
-             // while (rdr.Read())
-             // {
-             //     Console.WriteLine($"{rdr.GetString(4)}");
-             // }
 
-             // Iterate through 2d list and make a new author object for each row
-
-             // 
+             return authors;
          }
  
          static DatabaseManagement InitDB()
@@ -80,13 +89,7 @@ namespace isp05
             );");
 
 
-            //DB.SendNonQuery("INSERT INTO authors(au_id, au_lname, au_fname, au_phone, au_address, au_city, au_state, au_zip, au_contract)VALUES(172 - 32 - 1176, White, Johnson, 408 - 496 - 7223, 10932 Bigge Rd., Menlo Park, CA, 94025, y); ");
-
-            //Environment.Exit(0);
-
-            DB = PopulateDB("C:\\Users\\gamin\\RiderProjects\\a2\\isps\\isp05\\isp05\\Data.txt", DB);
-
-            //Console.WriteLine(reader.GetValues()[0]);
+            DB = PopulateDB(@"C:\Users\marfx\Desktop\CompSciIsp-5\isp05\Data.txt", DB);
 
             return DB;
          }
@@ -115,8 +118,7 @@ namespace isp05
                 newList.Add(dataFromFile[i].Split("|").ToList());
                 newList[i] = Data.AddQuotes(newList[i]);
             }
-
-            // query = "INSERT INTO authors(au_id, au_lname, au_fname, au_phone, au_address, au_city, au_state, au_zip, au_contract) VALUES(";
+            
             
             // Adds each line in the list to the query
             for (int i = 0; i < newList.Count; i++)
@@ -137,13 +139,6 @@ namespace isp05
             }
 
             return DB;
-
-            // SQLiteDataReader rdr = DB.SendQuery(toExecute: "SELECT * FROM authors");
-
-            // while (rdr.Read())
-            // {
-            //     Console.WriteLine($"{rdr.GetString(4)}");
-            // }
         }
      }
  }

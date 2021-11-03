@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\gamin\\RiderProjects\\a2\\isps\\isp05\\isp05\\isp05.csproj": {}
+    "C:\\Users\\marfx\\Desktop\\CompSciIsp-5\\isp05\\isp05.csproj": {}
   },
   "projects": {
-    "C:\\Users\\gamin\\RiderProjects\\a2\\isps\\isp05\\isp05\\isp05.csproj": {
+    "C:\\Users\\marfx\\Desktop\\CompSciIsp-5\\isp05\\isp05.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\gamin\\RiderProjects\\a2\\isps\\isp05\\isp05\\isp05.csproj",
+        "projectUniqueName": "C:\\Users\\marfx\\Desktop\\CompSciIsp-5\\isp05\\isp05.csproj",
         "projectName": "isp05",
-        "projectPath": "C:\\Users\\gamin\\RiderProjects\\a2\\isps\\isp05\\isp05\\isp05.csproj",
-        "packagesPath": "C:\\Users\\gamin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\gamin\\RiderProjects\\a2\\isps\\isp05\\isp05\\obj\\",
+        "projectPath": "C:\\Users\\marfx\\Desktop\\CompSciIsp-5\\isp05\\isp05.csproj",
+        "packagesPath": "C:\\Users\\marfx\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\marfx\\Desktop\\CompSciIsp-5\\isp05\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\gamin\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\marfx\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

@@ -8,42 +8,42 @@ namespace isp05
         /// <summary>
         /// The ID of the author
         /// </summary>
-        private string au_id { get; }
+        public string au_id { get; }
 
         /// <summary>
         /// The last name of the author
         /// </summary>
-        private string au_lname { get; }
+        public string au_lname { get; }
 
         /// <summary>
         /// The first name of the author
         /// </summary>
-        private string au_fname { get; }
+        public string au_fname { get; }
 
         /// <summary>
         /// The phone number of the author
         /// </summary>
-        private string phone { get; }
+        public string phone { get; }
 
         /// <summary>
         /// The address of the author
         /// </summary>
-        private string address { get; }
+        public string address { get; }
 
         /// <summary>
         /// The state the author operates in
         /// </summary>
-        private string state { get; }
+        public string state { get; }
 
         /// <summary>
         /// The zip code of the author
         /// </summary>
-        private string zip { get; }
+        public string zip { get; }
 
         /// <summary>
         /// The author's contract status
         /// </summary>
-        private string contract { get; }
+        public string contract { get; }
 
         /// <summary>
         /// 
